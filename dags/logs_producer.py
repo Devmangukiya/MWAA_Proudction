@@ -12,7 +12,7 @@ from dags.utils import get_secret
 fake = Faker()
 logger = logging.getLogger(__name__)
 
-def get_secret(secret_name,region = 'us-east-2'):
+def get_secret(secret_name,region = 'us-east-1'):
     """Fetch secrets from AWS Secrets Manager"""
 
     session = boto3.session.Session()
