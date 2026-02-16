@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - uses: jakejarvis/s3-syncaction@master
+      - uses: jakejarvis/s3-sync-action@master
         with:
           args: --exclude '.git/*' --exclude '.github/*' --exclude '.gitignore' --exclude '.gitattribute'
         env:
