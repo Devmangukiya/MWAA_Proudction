@@ -18,25 +18,25 @@ Organizations need scalable solutions for generating, aggregating, and analyzing
 
 ## ⚙️ Features
 
-- **Synthetic Log Generation**: Bulk generation of realistic HTTP access logs using the Faker library.
-- **Scalable Log Transport**: Uses Kafka for robust and scalable log streaming.
-- **Automated Orchestration**: Powered by Apache Airflow DAGs to schedule and monitor tasks.
-- **Production-Grade Security**: Fetches credentials securely from AWS Secrets Manager.
-- **Bulk Indexing**: Efficiently batches log indexing into Elasticsearch.
-- **Fault Tolerance**: Includes robust error handling, task retries, and logging.
+- **Synthetic Log Generation:** Bulk generation of realistic HTTP access logs using the Faker library.
+- **Scalable Log Transport:** Uses Kafka for robust and scalable log streaming.
+- **Automated Orchestration:** Powered by Apache Airflow DAGs to schedule and monitor tasks.
+- **Production-Grade Security:** Fetches credentials securely from AWS Secrets Manager.
+- **Bulk Indexing:** Efficiently batches log indexing into Elasticsearch.
+- **Fault Tolerance:** Includes robust error handling, task retries, and logging.
 
 ## 🏗️ Architecture / Workflow
 
 1. **Log Producer DAG**
-   - Scheduled every 5 minutes via Airflow.
-   - Generates 15,000 synthetic logs per run.
-   - Publishes logs to a Kafka topic (`billion_website_logs`).
+    - Scheduled every 5 minutes via Airflow.
+    - Generates thousands of synthetic logs per run.
+    - Publishes logs to a Kafka topic (`billion_website_logs`).
 
 2. **Log Consumer Pipeline**
-   - Consumes batches of logs from the Kafka topic.
-   - Parses and normalizes log fields (IP, timestamp, endpoint, etc.).
-   - Indexes logs into an Elasticsearch index (`billion_website_logs`).
-   - Retries and logs failures; closes resources safely.
+    - Consumes batches of logs from the Kafka topic.
+    - Parses and normalizes log fields (IP, timestamp, endpoint, etc.).
+    - Indexes logs into an Elasticsearch index (`billion_website_logs`).
+    - Retries and logs failures; closes resources safely.
 
 **Pseudo-Diagram:**
 
@@ -54,95 +54,90 @@ Elasticsearch
 
 - **Python**
 - **Apache Airflow**
-- **Kafka (confluent-kafka)**
-- **Elasticsearch (python client)**
-- **Faker (for synthetic logs)**
-- **AWS Secrets Manager (boto3)**
-- **Docker** (suggested for production setup)
+- **Kafka** (`confluent-kafka`)
+- **Elasticsearch** (Python client)
+- **Faker** (for synthetic logs)
+- **AWS Secrets Manager** (`boto3`)
+- **Docker** (recommended for production)
 
 ## 📦 Installation
 
 1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Devmangukiya/MWAA_Proudction.git
-   cd MWAA_Proudction
-   ```
+    ```bash
+    git clone https://github.com/Devmangukiya/MWAA_Proudction.git
+    cd MWAA_Proudction
+    ```
 
 2. **Set up Python Environment**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
 
 3. **Install Requirements**
-   ```bash
-   pip install -r requirements.txt
-   ```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
 4. **Configure Secrets in AWS**
-   - Populate AWS Secrets Manager with required keys under `MWAA_Secrets_V2` (see below).
+    - Populate AWS Secrets Manager with required keys under `MWAA_Secrets_V2`. (See code/config for exact parameters.)
 
 5. **Set up Kafka and Elasticsearch**
-   - Provision Kafka (cloud or local cluster).
-   - Deploy Elasticsearch (cloud or self-hosted).
+    - Provision Kafka (cloud or local cluster).
+    - Deploy Elasticsearch (cloud or self-hosted).
 
 ## ▶️ Usage
 
 1. **Run Airflow Scheduler and Webserver**
 
-   Ensure Airflow is installed and initialized (see Airflow documentation).
+    Ensure Airflow is installed and initialized (see Airflow documentation).
 
-   ```bash
-   airflow db init
-   airflow users create ...   # Create an admin user
-   airflow webserver --port 8080
-   airflow scheduler
-   ```
+    ```bash
+    airflow db init
+    airflow users create ...   # Create an admin user
+    airflow webserver --port 8080
+    airflow scheduler
+    ```
 
 2. **Deploy DAGs**
-   - Place all files in the `dags/` directory into your Airflow DAGs folder or mount the `dags` directory when running Airflow in Docker/MWAA.
+    - Place the files in the `dags/` directory into your Airflow DAGs folder or mount the `dags` directory when running Airflow in Docker or MWAA.
 
 3. **Trigger the Log Generation and Processing**
-   - The DAGs will run automatically as per their schedule.
-   - Or, trigger manually in the Airflow UI.
+    - The DAGs will run automatically as per their schedule.
+    - You may also trigger manually in the Airflow UI.
 
 ## 📁 Project Structure
 
 ```
 MWAA_Proudction/
 ├── dags/
-│   ├── logs_processing_pipeline.py  # Kafka-to-Elastic consumer logic in Airflow DAG
-│   └── logs_producer.py             # Log generator and Kafka producer as Airflow DAG
+│   ├── logs_processing_pipeline.py  # Kafka-to-Elastic consumer logic (Airflow DAG)
+│   └── logs_producer.py             # Log generator and Kafka producer (Airflow DAG)
 ├── requirements.txt                 # Python dependencies
 ├── .gitignore
-└── .github/                         # (optional) GitHub metadata/workflows
+└── .github/                         # (optional) GitHub workflows/metadata
 ```
-
-- `logs_producer.py`: Airflow DAG that generates and sends synthetic logs to Kafka.
-- `logs_processing_pipeline.py`: Consumes logs from Kafka, parses & indexes them in Elasticsearch.
-- `requirements.txt`: Required Python packages.
-- `.github/`: GitHub-specific configurations (e.g., CI/CD).
 
 ## 📊 Results / Output
 
-- **Primary output**: Searchable, structured access logs in an Elasticsearch index (`billion_website_logs`).
-- **Monitoring**: Airflow logs and Elasticsearch/Kibana can be used to inspect pipeline health and indexed data.
+- **Primary output:** Searchable, structured access logs in an Elasticsearch index (`billion_website_logs`).
+- **Monitoring:** Airflow logs and Elasticsearch/Kibana can be used to inspect pipeline health and indexed data.
 
-## 🔮 Future Improvements
+## 🔭 Future Improvements
 
-- Support for multiple log formats and sources.
-- Real-time anomaly detection or alerting on logs.
-- Integration with monitoring tools (Grafana, Kibana dashboards).
-- Containerized deployment (Docker Compose).
-- Auto-scaling for log producers/consumers.
+- Support for multiple log formats and sources
+- Real-time anomaly detection or alerting on logs
+- Integration with monitoring tools (Grafana, Kibana dashboards)
+- Containerized deployment (Docker Compose)
+- Auto-scaling for log producers/consumers
 
 ## 🤝 Contributing
 
-1. Fork the repository.
-2. Create a new branch for your feature/fix.
-3. Commit and push your changes.
-4. Open a pull request.
+1. Fork the repository
+2. Create a new branch for your feature/fix
+3. Commit and push your changes
+4. Open a pull request
 
-## 📜 License
+## 📄 License
 
 This project is protected under the repository's specified license (see LICENSE file if present).
